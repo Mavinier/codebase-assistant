@@ -1,5 +1,6 @@
 import pytest
 
+from codebase_assistant.domain.value_objects.source_format import SourceFormat
 from codebase_assistant.infrastructure.parsers.typescript_parser import TypeScriptParser
 
 
@@ -19,7 +20,7 @@ def test_parse_typescript_file(parser: TypeScriptParser) -> None:
     }
     """
 
-    tree = parser.parse(source_code, ".ts")
+    tree = parser.parse(source_code, SourceFormat.TS)
 
     assert tree.root_node.type == "program"
     assert not tree.root_node.has_error
@@ -32,14 +33,14 @@ def test_parse_tsx_file(parser: TypeScriptParser) -> None:
     };
     """
 
-    tree = parser.parse(source_code, ".tsx")
+    tree = parser.parse(source_code, SourceFormat.TSX)
 
     assert tree.root_node.type == "program"
     assert not tree.root_node.has_error
 
 
-def test_parse_unsupported_extension(parser: TypeScriptParser) -> None:
+def test_parse_unsupported_format(parser: TypeScriptParser) -> None:
     source_code = b"some unsupported content"
 
-    with pytest.raises(ValueError, match="Unsupported extension"):
-        parser.parse(source_code, ".html")
+    with pytest.raises(ValueError, match="Unsupported format"):
+        parser.parse(source_code, SourceFormat.JS)
