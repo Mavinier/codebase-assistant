@@ -19,6 +19,7 @@ from codebase_assistant.infrastructure.scanners.language_detector import (
 
 # TODO: refactor test
 
+
 def test_parse_returns_tree_for_supported_format() -> None:
     detector = LanguageDetector()
     path = Path("src/domain/makeLanguageDetector.tsx")

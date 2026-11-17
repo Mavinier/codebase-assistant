@@ -17,3 +17,5 @@ format-check:
 	uv run ruff format --check .
 
 quality: lint format-check test
+
+tidy: format fix quality
