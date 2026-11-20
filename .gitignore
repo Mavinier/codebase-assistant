@@ -19,6 +19,7 @@ venv/
 .pytest_cache/
 .coverage
 htmlcov/
+examples
 
 # Type checking / linting
 .mypy_cache/
