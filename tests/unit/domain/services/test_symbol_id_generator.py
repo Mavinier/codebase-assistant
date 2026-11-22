@@ -47,13 +47,33 @@ def test_generate_deterministic() -> None:
 
 @pytest.mark.parametrize(
     "repository_id",
+    [344, 2.3, True, None],
+)
+def test_rejects_invalid_repository_id_instance(repository_id: object) -> None:
+    with pytest.raises(
+        TypeError,
+        match="'repository_id' must be a string instance",
+    ):
+        symbol_generator = SymbolIdGenerator()
+        symbol_generator.generate(
+            repository_id,
+            CommitSHA("cbda819156a1a5eedad38dc64871b8ca157df994"),
+            Path("src/domain/service/typescript.ts"),
+            SymbolKind.CLASS,
+            "test-name",
+            1,
+            5,
+        )
+
+
+@pytest.mark.parametrize(
+    "repository_id",
     [
-        1234,
         "",
         " ",
     ],
 )
-def test_rejects_invalid_repository_id(repository_id: object) -> None:
+def test_rejects_invalid_repository_id_value(repository_id: object) -> None:
     with pytest.raises(
         ValueError,
         match="'repository_id' must be a non-empty and not whitespace-only string",
@@ -80,9 +100,7 @@ def test_rejects_invalid_repository_id(repository_id: object) -> None:
     ],
 )
 def test_rejects_invalid_commit_sha(commit_sha: object) -> None:
-    with pytest.raises(
-        TypeError, match="'commit_sha' must be an instance of CommitSHA"
-    ):
+    with pytest.raises(TypeError, match="'commit_sha' must be a CommitSHA instance"):
         symbol_generator = SymbolIdGenerator()
         symbol_generator.generate(
             "repository_id",
@@ -96,7 +114,7 @@ def test_rejects_invalid_commit_sha(commit_sha: object) -> None:
 
 
 def test_rejects_invalid_file_path_instance() -> None:
-    with pytest.raises(TypeError, match="'file_path' must be an instance of Path"):
+    with pytest.raises(TypeError, match="'file_path' must be a Path instance"):
         symbol_generator = SymbolIdGenerator()
         symbol_generator.generate(
             "repository_id",
@@ -137,7 +155,7 @@ def test_rejects_invalid_file_path(file_path: object) -> None:
     ["simbol_kind", True, " "],
 )
 def test_rejects_invalid_kind(kind: object) -> None:
-    with pytest.raises(TypeError, match="'kind' must be an instance of SymbolKind"):
+    with pytest.raises(TypeError, match="'kind' must be a SymbolKind instance"):
         symbol_generator = SymbolIdGenerator()
         symbol_generator.generate(
             "repository_id",
@@ -152,13 +170,30 @@ def test_rejects_invalid_kind(kind: object) -> None:
 
 @pytest.mark.parametrize(
     "name",
+    [123, 1.02, None, True],
+)
+def test_rejects_invalid_name_instance(name: object) -> None:
+    with pytest.raises(TypeError, match="'name' must be a string instance"):
+        symbol_generator = SymbolIdGenerator()
+        symbol_generator.generate(
+            "repository_id",
+            CommitSHA("cbda819156a1a5eedad38dc64871b8ca157df994"),
+            Path("src/domain/service/typescript.ts"),
+            SymbolKind.CLASS,
+            name,
+            1,
+            5,
+        )
+
+
+@pytest.mark.parametrize(
+    "name",
     [
-        1234,
         "",
         " ",
     ],
 )
-def test_rejects_invalid_name(name: object) -> None:
+def test_rejects_invalid_name_value(name: object) -> None:
     with pytest.raises(
         ValueError, match="'name' must be a non-empty and not whitespace-only string"
     ):

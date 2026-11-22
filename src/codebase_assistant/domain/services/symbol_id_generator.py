@@ -18,24 +18,30 @@ class SymbolIdGenerator:
         start_byte: int,
         end_byte: int,
     ) -> SymbolId:
-        if not isinstance(repository_id, str) or not repository_id.strip():
+        if not isinstance(repository_id, str):
+            raise TypeError("'repository_id' must be a string instance")
+
+        if not repository_id.strip():
             raise ValueError(
                 "'repository_id' must be a non-empty and not whitespace-only string"
             )
 
         if not isinstance(commit_sha, CommitSHA):
-            raise TypeError("'commit_sha' must be an instance of CommitSHA")
+            raise TypeError("'commit_sha' must be a CommitSHA instance")
 
         if not isinstance(file_path, Path):
-            raise TypeError("'file_path' must be an instance of Path")
+            raise TypeError("'file_path' must be a Path instance")
 
         if file_path.is_absolute() or ".." in file_path.parts:
             raise ValueError("'file_path' must be relative and not contain '..'")
 
         if not isinstance(kind, SymbolKind):
-            raise TypeError("'kind' must be an instance of SymbolKind")
+            raise TypeError("'kind' must be a SymbolKind instance")
 
-        if not isinstance(name, str) or not name.strip():
+        if not isinstance(name, str):
+            raise TypeError("'name' must be a string instance")
+
+        if not name.strip():
             raise ValueError(
                 "'name' must be a non-empty and not whitespace-only string"
             )
