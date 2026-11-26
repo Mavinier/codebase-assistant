@@ -42,12 +42,39 @@ class SymbolExtractor:
         current_parent_id = parent_id
 
         if node.type == "function_declaration":
-            symbol = self._build_function_symbol(
+            symbol = self._build_symbol(
                 node=node,
                 repository_id=repository_id,
                 commit_sha=commit_sha,
                 file_path=file_path,
                 parent_id=parent_id,
+                kind=SymbolKind.FUNCTION,
+            )
+            if symbol is not None:
+                symbols.append(symbol)
+                current_parent_id = symbol.id
+
+        elif node.type == "class_declaration":
+            symbol = self._build_symbol(
+                node=node,
+                repository_id=repository_id,
+                commit_sha=commit_sha,
+                file_path=file_path,
+                parent_id=parent_id,
+                kind=SymbolKind.CLASS,
+            )
+            if symbol is not None:
+                symbols.append(symbol)
+                current_parent_id = symbol.id
+
+        elif node.type == "method_definition":
+            symbol = self._build_symbol(
+                node=node,
+                repository_id=repository_id,
+                commit_sha=commit_sha,
+                file_path=file_path,
+                parent_id=parent_id,
+                kind=SymbolKind.METHOD,
             )
             if symbol is not None:
                 symbols.append(symbol)
@@ -63,13 +90,14 @@ class SymbolExtractor:
                 symbols=symbols,
             )
 
-    def _build_function_symbol(
+    def _build_symbol(
         self,
         node: Node,
         repository_id: str,
         commit_sha: CommitSHA,
         file_path: Path,
         parent_id: SymbolId | None,
+        kind: SymbolKind,
     ) -> CodeSymbol | None:
         name_node = node.child_by_field_name("name")
 
@@ -77,7 +105,6 @@ class SymbolExtractor:
             return None
 
         name = name_node.text.decode("utf-8")
-        kind = SymbolKind.FUNCTION
         start_line, start_column = node.start_point
         end_line, end_column = node.end_point
         symbol_location = SymbolLocation(start_line, end_line, start_column, end_column)
