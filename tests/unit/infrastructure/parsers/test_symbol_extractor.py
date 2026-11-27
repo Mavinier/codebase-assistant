@@ -194,3 +194,32 @@ def test_extract_tree_with_object_literal_method(parser: TypeScriptParser) -> No
     assert symbol.name == "greet"
     assert symbol.kind == SymbolKind.METHOD
     assert symbol.parent_id is None
+
+
+def test_extract_tree_with_interface(parser: TypeScriptParser) -> None:
+    tree = parser.parse(
+        b"""
+        interface User {
+            name: string;
+            age: number;
+        }""",
+        SourceFormat.TS,
+    )
+    symbol_extractor = SymbolExtractor(SymbolIdGenerator())
+    symbols = symbol_extractor.extract(
+        tree,
+        "repository_id",
+        CommitSHA("da39a3ee5e6b4b0d3255bfef95601890afd80709"),
+        Path("src/test/test.ts"),
+    )
+
+    assert len(symbols) == 1
+    symbol = symbols[0]
+
+    assert not tree.root_node.has_error
+    assert symbol.name == "User"
+    assert symbol.kind == SymbolKind.INTERFACE
+    assert symbol.path == Path("src/test/test.ts")
+    assert symbol.parent_id is None
+
+    assert symbol.location == SymbolLocation(1, 4, 8, 9)

@@ -80,6 +80,19 @@ class SymbolExtractor:
                 symbols.append(symbol)
                 current_parent_id = symbol.id
 
+        elif node.type == "interface_declaration":
+            symbol = self._build_symbol(
+                node=node,
+                repository_id=repository_id,
+                commit_sha=commit_sha,
+                file_path=file_path,
+                parent_id=parent_id,
+                kind=SymbolKind.INTERFACE,
+            )
+            if symbol is not None:
+                symbols.append(symbol)
+                current_parent_id = symbol.id
+
         for child in node.named_children:
             self._visit(
                 node=child,
